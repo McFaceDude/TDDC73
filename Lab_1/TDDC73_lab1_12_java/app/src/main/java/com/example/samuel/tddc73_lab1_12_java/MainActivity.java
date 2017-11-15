@@ -27,14 +27,13 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout linearLayoutMain = new LinearLayout(this);
         linearLayoutMain.setOrientation(LinearLayout.VERTICAL);
 
-        //Name fields
-        LinearLayout linearLayoutName = new LinearLayout(this);
-        linearLayoutName.setOrientation(LinearLayout.HORIZONTAL);
 
-        TextView textViewName = new TextView(this);
-        textViewName.setText("Name");
-        textViewName.setMinWidth(150);
-        linearLayoutName.addView(textViewName);
+
+
+        TextView question1 = new TextView(this);
+        question1.setText("Hur trivs du på LiU?");
+        question1.setMinWidth(150);
+        linearLayoutMain.addView(question1);
 
         EditText editTextName = new EditText(this);
         editTextName.setText("Samuel");
