@@ -40,8 +40,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:isIndicator="false"
-                android:numStars="5"
-                android:textAlignment="center" />
+                android:numStars="5" />
         </RelativeLayout>
 
         <EditText
