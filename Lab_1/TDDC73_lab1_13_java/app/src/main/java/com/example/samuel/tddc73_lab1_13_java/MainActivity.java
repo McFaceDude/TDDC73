@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -64,8 +65,31 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutQuestion2.addView(checkBox5);
         linearLayoutMain.addView(linearLayoutQuestion2);
 
-        ImageView imgView=(ImageView) findViewById(R.id.all);
-        imgView.setImageResource("@drawable/liulogga");
+        int drawableID = this.getResources().getIdentifier("liulogga", "drawable", getPackageName());
+        ImageView imageView = new ImageView(this);
+        imageView.setImageResource(drawableID);
+        imageView.setPadding(50,0,30,0);
+        linearLayoutMain.addView(imageView);
+
+        TextView question3 = new TextView(this);
+        question3.setText("Är detta LiUs logotyp?");
+        question3.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        linearLayoutMain.addView(question3);
+
+        LinearLayout linearLayoutQuestion3 = new LinearLayout(this);
+        linearLayoutQuestion3.setOrientation(LinearLayout.HORIZONTAL);
+        CheckBox checkBox8 = new CheckBox(this);
+        checkBox8.setText("Ja");
+        linearLayoutQuestion3.addView(checkBox8);
+        CheckBox checkBox9 = new CheckBox(this);
+        checkBox9.setText("Nej");
+        linearLayoutQuestion3.addView(checkBox9);
+        linearLayoutMain.addView(linearLayoutQuestion3);
+
+        Button button = new Button(this);
+        button.setText("SKICKA IN");
+        button.setWidth(screenWidth);
+        linearLayoutMain.addView(button);
 
         constraintLayout.addView(linearLayoutMain);
         setContentView(constraintLayout);
