@@ -20,20 +20,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int screenWidth = 800;
 
         ConstraintLayout constraintLayout = new ConstraintLayout(this);
 
         LinearLayout linearLayoutMain = new LinearLayout(this);
         linearLayoutMain.setOrientation(LinearLayout.VERTICAL);
 
+        //Name fields
+        LinearLayout linearLayoutName = new LinearLayout(this);
+        linearLayoutName.setOrientation(LinearLayout.HORIZONTAL);
 
-
-
-        TextView question1 = new TextView(this);
-        question1.setText("Hur trivs du på LiU?");
-        question1.setMinWidth(150);
-        linearLayoutMain.addView(question1);
+        TextView textViewName = new TextView(this);
+        textViewName.setText("Password");
+        textViewName.setMinWidth(150);
+        linearLayoutName.addView(textViewName);
 
         EditText editTextName = new EditText(this);
         editTextName.setText("Samuel");
@@ -71,18 +71,19 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutEmail.addView(editTextEmail);
         linearLayoutMain.addView(linearLayoutEmail);
 
-        //Email fields
+        //Age fields
         LinearLayout linearLayoutAge = new LinearLayout(this);
         linearLayoutAge.setOrientation(LinearLayout.HORIZONTAL);
 
         TextView textViewAge = new TextView(this);
-        textViewAge.setText("Name");
+        textViewAge.setText("Age");
         textViewAge.setMinWidth(150);
         linearLayoutAge.addView(textViewAge);
 
         SeekBar seekBarAge = new SeekBar(this);
-        //seekBarAge.setPadding(100,0,1,0);
-        seekBarAge.setMinimumWidth(600);
+        seekBarAge.setPadding(13,0,0,0);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(600, 50);
+        seekBarAge.setLayoutParams(lp);
         linearLayoutAge.addView(seekBarAge);
         linearLayoutMain.addView(linearLayoutAge);
 
