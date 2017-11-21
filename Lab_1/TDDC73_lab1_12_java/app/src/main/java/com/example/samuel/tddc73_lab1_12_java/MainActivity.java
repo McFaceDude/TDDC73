@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutName.setOrientation(LinearLayout.HORIZONTAL);
 
         TextView textViewName = new TextView(this);
-        textViewName.setText("Password");
+        textViewName.setText("Name");
         textViewName.setMinWidth(150);
         linearLayoutName.addView(textViewName);
 

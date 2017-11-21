@@ -15,18 +15,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Hur trivs du på liu?"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteY="2dp" />
+            android:textAlignment="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:layout_editor_absoluteY="17dp">
+            android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/checkBox"
@@ -52,19 +46,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Läser du på LiTH?"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteY="2dp" />
+            android:textAlignment="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="68dp">
+            android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/checkBox4"
@@ -92,19 +79,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Är detta LIUs logotyp?"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteY="2dp" />
+            android:textAlignment="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="68dp">
+            android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/checkBox6"
