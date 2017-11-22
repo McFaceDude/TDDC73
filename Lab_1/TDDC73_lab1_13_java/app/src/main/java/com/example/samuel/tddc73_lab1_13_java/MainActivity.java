@@ -16,13 +16,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-
+    int screenWidth = 800;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int screenWidth = 800;
-
-        ConstraintLayout constraintLayout = new ConstraintLayout(this);
 
         LinearLayout linearLayoutMain = new LinearLayout(this);
         linearLayoutMain.setOrientation(LinearLayout.VERTICAL);
@@ -91,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         button.setWidth(screenWidth);
         linearLayoutMain.addView(button);
 
-        constraintLayout.addView(linearLayoutMain);
-        setContentView(constraintLayout);
+        setContentView(linearLayoutMain);
     }
 }
