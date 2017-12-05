@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.SearchView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
     private final ArrayList<Pair<String, ArrayList<String>>> parentList;
     private final ArrayList<Pair<String, ArrayList<String>>> originalParentList;
+    private SearchView search;
 
     public ExpandableListAdapter(Context context, ArrayList<Pair<String, ArrayList<String>>> parentList) {
         System.out.println("constructor" + parentList);
@@ -86,13 +88,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         if( view == null){
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.child_items, null);
+            view = layoutInflater.inflate(R.layout.parent_items, null);
         }
 
         TextView heading = (TextView) view;
-        if (heading == null){
-            System.out.println("its NULL!");
-        }
         heading.setText(parentList.get(parentPosition).first);
         return view;
     }
