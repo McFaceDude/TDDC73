@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.SearchView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -115,6 +116,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int i, int i1) {
         Log.d("", "isChildSelectable: ");
         return true;
+    }
+
+    public void highlightParent(Integer index){
+        
     }
 
     public void searchData(String query){
