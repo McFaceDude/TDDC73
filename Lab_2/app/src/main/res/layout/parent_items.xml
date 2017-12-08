@@ -5,5 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="30dp"
+    android:addStatesFromChildren="true"
     android:textAppearance="?android:attr/textAppearanceMedium"
     xmlns:android="http://schemas.android.com/apk/res/android" />

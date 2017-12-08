@@ -1,6 +1,5 @@
 package com.example.samuel.tddc73_lab2;
 
-import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,14 +18,19 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
 
 
     private ArrayList<Pair<String, ArrayList<String>>> data = new ArrayList<>();
+    private ArrayList<String> parentList = new ArrayList<>();
     private com.example.samuel.tddc73_lab2.ExpandableListAdapter expandableListAdapter;
+    ExpandableListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final EditText search =  findViewById(R.id.search);
-        search.addTextChangedListener(new TextWatcher() {
+        listView = findViewById(R.id.ListView);
+        final EditText searchField =  findViewById(R.id.search);
+        searchField.setSelection(1);
+        searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 System.out.println("before text");
@@ -35,15 +38,22 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                System.out.println("on text");
-                search(charSequence.toString());
+                if(charSequence.length() == 0){
+                    searchField.setText("/");
+
+                }
+                else if(charSequence.toString().equals("/")) {
+                    searchField.setSelection(1);
+                }
 
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                System.out.println("After text change");
-
+                if(searchField.length() > 1){
+                    System.out.println("after if");
+                    search(editable.toString());
+                }
             }
         });
 
@@ -58,59 +68,60 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
     }
 
     public void search(String query){
-        query = query.toLowerCase();
+
+        System.out.println("query: "+ query);
         List splitedString;
-        boolean parentMatch = false;
+        splitedString = Arrays.asList(query.split("/", 3));
+        ArrayList<String> potentialParents = potentialMatches(parentList, splitedString.get(1).toString());
+        System.out.println("potentialParents: " + potentialParents);
+        if (potentialParents.size() > 0){
 
-        if (query.contains("/")){
-            splitedString = Arrays.asList(query.split("/"));
-            System.out.println("split result:" + splitedString.get(1));
-            for (Pair<String, ArrayList<String>> parent: data){
-                if (parent.first.toLowerCase().contains(splitedString.get(1).toString())) {
+            System.out.println("split result: " + splitedString.get(1));
 
-                    if (parent.first.toLowerCase().equals(splitedString.get(1).toString())){
-                        System.out.println("Parent match on: " + splitedString.get(1).toString());
+            Integer parentMatchIndex =  match(parentList, splitedString.get(1).toString());
+            if (parentMatchIndex != null){
+                System.out.println("expand that shit on parent index: " + parentMatchIndex);
 
-                        parentMatch = true;
-                        if(splitedString.size() > 2){
-                            Integer childMatch =  childMatch(parent.second, splitedString.get(2).toString().toLowerCase());
-                            if (childMatch != null){
-                                if (childMatch == -1){
-                                    System.out.println("partial match o child");
-                                }
-                                else{
-                                    System.out.println("child match on child:" + splitedString.get(childMatch));
-                                }
-                            }
+                if (splitedString.size() > 2){
+                    ArrayList<String> potentialChildren = potentialMatches(data.get(parentMatchIndex).second, splitedString.get(2).toString());
+                    if(potentialChildren.size() > 0) {
+                        Integer childMatchIndex = match(data.get(parentMatchIndex).second, splitedString.get(2).toString());
+
+
+                        System.out.println("childmatchINdex: " + childMatchIndex);
+                        if (potentialChildren.size() > 0 && childMatchIndex != null) {
+                            System.out.println("found the child!, parentIndex: " + parentMatchIndex + " childindex: " + childMatchIndex);
+                            int index = listView.getFlatListPosition(ExpandableListView.getPackedPositionForChild(parentMatchIndex, childMatchIndex));
+                            System.out.println("flat list position: ");
+                            System.out.println("flatend index: " + index);
+                            listView.setItemChecked(index, true);
                         }
                     }
-                    else{
-                        System.out.println("partial match on parent: " + parent.first.toLowerCase());
-                    }
                 }
             }
-
         }
         else{
-
-            System.out.println("no / sign");
+            System.out.println("no parent match, RED");
         }
-
+    }
+    
+    public ArrayList<String> potentialMatches(ArrayList<String> pMatches, String query){
+        ArrayList<String> potentialMatchesIndex = new ArrayList<>();
+        System.out.println("PMATCHES: " + pMatches);
+        for(int i=0; i <pMatches.size(); i++){
+            System.out.println("PMATCH: " + pMatches.get(i));
+            if (pMatches.get(i).length() >= query.length() && pMatches.get(i).substring(0, query.length()).equals(query)){
+                potentialMatchesIndex.add(pMatches.get(i));
+            }
+        }
+        return potentialMatchesIndex;
     }
 
-    public Integer childMatch(List children, String query){
-        Log.d("", "childMatch: childlist" + children);
-        Integer index = 0;
-        for(Object child: children){
-            if (child.toString().toLowerCase().contains(query)){
-                if(child.toString().toLowerCase().equals(query)){
-                    return index;
-                }
-                else{
-                    return -1;
-                }
+    public Integer match(ArrayList<String> potentialMatches, String query){
+        for(int i=0; i <potentialMatches.size(); i++){
+            if (potentialMatches.get(i).equals(query)){
+                return i;
             }
-            index += 1;
         }
         return null;
     }
@@ -129,13 +140,17 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
         life.add("Disco");
 
         ArrayList<String> food = new ArrayList<>();
-        food.add("Humus");
+        food.add("Hummus");
         food.add("Falafel");
         food.add("Falafel");
 
         Pair<String, ArrayList<String>> vehiclePair = new Pair<>("Vehicles", vehicles);
         Pair<String, ArrayList<String>> foodPair = new Pair<>("Food", food);
         Pair<String, ArrayList<String>> lifePair = new Pair<>("Life", life);
+        parentList.add("Vehicles");
+        parentList.add("Food");
+        parentList.add("Life");
+
         data.add(vehiclePair);
         data.add(foodPair);
         data.add(lifePair);
