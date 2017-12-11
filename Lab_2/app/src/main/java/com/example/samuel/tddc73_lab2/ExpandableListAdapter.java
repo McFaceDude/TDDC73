@@ -44,48 +44,48 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        Log.d("", "getGroupCount: return " + parentList.size());
+        //Log.d("", "getGroupCount: return " + parentList.size());
         return parentList.size();
     }
 
     @Override
     public int getChildrenCount(int parentPosition) {
-        Log.d("", "getChildrenCount:" + parentPosition);
+        //Log.d("", "getChildrenCount:" + parentPosition);
         return parentList.get(parentPosition).second.size();
     }
 
     @Override
     public String getGroup(int parentPosition) {
-        Log.d("", "getGroup:" + parentPosition);
+        //Log.d("", "getGroup:" + parentPosition);
         return parentList.get(parentPosition).first;
     }
 
     @Override
     public String getChild(int parentPosition, int childPosition) {
-        Log.d("", "getChild:" + parentPosition + childPosition);
+        //Log.d("", "getChild:" + parentPosition + childPosition);
         return parentList.get(parentPosition).second.get(childPosition);
     }
     @Override
     public long getGroupId(int parentPosition) {
-        Log.d("", "getGroupId:" + parentPosition);
+        //Log.d("", "getGroupId:" + parentPosition);
         return parentPosition;
     }
 
     @Override
     public long getChildId(int parentPosition , int childPosition) {
-        Log.d("", "getChildId:" + parentPosition);
+        //Log.d("", "getChildId:" + parentPosition);
         return childPosition;
     }
 
     @Override
     public boolean hasStableIds() {
-        Log.d("", "hasStableIds: ");
+        //Log.d("", "hasStableIds: ");
         return false;
     }
 
     @Override
     public View getGroupView(int parentPosition, boolean isLastChild, View view, ViewGroup parent) {
-        Log.d("", "getGroupView: " + parentPosition);
+        //Log.d("", "getGroupView: " + parentPosition);
 
         if( view == null){
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -99,7 +99,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int parentPosition, int childPosition, boolean isLastChild, View view, ViewGroup parent) {
-        Log.d("", "getChildView: " + parentPosition + childPosition);
+        //Log.d("", "getChildView: " + parentPosition + childPosition);
         String child = getChild(parentPosition, childPosition);
 
         if(view == null){
@@ -114,44 +114,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        Log.d("", "isChildSelectable: ");
+        //Log.d("", "isChildSelectable: ");
         return true;
-    }
-
-    public void highlightParent(Integer index){
-        
-    }
-
-    public void searchData(String query){
-        Log.d("", "searchData: " + query);
-        query = query.toLowerCase();
-        parentList.clear();
-
-        if(query.isEmpty()){
-            System.out.println("query is empty");
-            parentList.addAll(originalParentList);
-        }
-        /*else {
-            Iterator<Map.Entry<String, ArrayList<String>>> iterator = originalParentList.entrySet().iterator();
-            System.out.println();
-            while (iterator.hasNext()) {
-                ArrayList<String> newList = new ArrayList<>();
-                Map.Entry<String, ArrayList<String>> currentValue = iterator.next();
-                for (String child : currentValue.getValue()) {
-                    if (child.toLowerCase().contains(query) ||
-                            child.toLowerCase().contains(query)) {
-                        System.out.println("FOUND IT BEAATCH!" + child);
-                        newList.add(child);
-                    }
-                }
-                if (newList.size() > 0) {
-                    System.out.println("SIZE" + newList.size());
-                    parentList.add(currentValue.getKey(), newList);
-                    iterator.remove(); // avoids a ConcurrentModificationException
-                }
-            }
-        }*/
-        System.out.println("parent list after search" + parentList);
-        notifyDataSetChanged();
     }
 }
