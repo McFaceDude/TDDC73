@@ -32,13 +32,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private SearchView search;
 
     public ExpandableListAdapter(Context context, ArrayList<Pair<String, ArrayList<String>>> parentList) {
-        System.out.println("constructor" + parentList);
         this.context = context;
         this.parentList = new ArrayList<>();
         this.parentList.addAll(parentList);
         this.originalParentList = new ArrayList<>();
         this.originalParentList.addAll(parentList);
-        //searchData("falafel");
 
     }
 
