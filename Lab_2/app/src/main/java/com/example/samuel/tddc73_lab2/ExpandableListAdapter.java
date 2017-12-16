@@ -71,7 +71,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int parentPosition , int childPosition) {
-        //Log.d("", "getChildId:" + parentPosition);
+        Log.d("", "getChildId:" + parentPosition);
         return childPosition;
     }
 
@@ -97,7 +97,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int parentPosition, int childPosition, boolean isLastChild, View view, ViewGroup parent) {
-        //Log.d("", "getChildView: " + parentPosition + childPosition);
+        //Log.d("", "getChildView, parentPos:" + parentPosition + " childPos: "+ childPosition);
         String child = getChild(parentPosition, childPosition);
 
         if(view == null){
