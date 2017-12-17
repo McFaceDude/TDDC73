@@ -2,6 +2,7 @@ package com.example.samuel.lab_3;
 
 import android.os.AsyncTask;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,19 +11,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
 
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by samuel on 12/16/17.
  */
 
 
-public class GetJson extends AsyncTask<String, String, String> {
+public class GetJson extends AsyncTask<String, String, JSONObject> {
 
     public interface AsyncResponse{
-        void processFinish(String result);
+        void processFinish(JSONObject result) throws JSONException;
     }
     private AsyncResponse asyncResponse = null;
     public GetJson(AsyncResponse asyncResponse){
@@ -30,29 +30,23 @@ public class GetJson extends AsyncTask<String, String, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
-        String url = params[0];
+    protected JSONObject doInBackground(String... params) {
+        String searchSeq = params[0];
+        String id = params[1];
 
-        Integer id = 1;
-        id.toString();
-
-        String name = "Emm";
         HttpURLConnection connection = null;
         JSONObject json;
         BufferedReader bufferedReader = null;
+        final String url = "http://getnames-getnames.a3c1.starter-us-west-1.openshiftapps.com/getnames/";
         try {
-            connection =  (HttpURLConnection) new URL(url).openConnection();
+            connection =  (HttpURLConnection) new URL(url + id.toString() + "/" + searchSeq).openConnection();
             connection.connect();
-
             bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            json = new JSONObject( bufferedReader.readLine());
-
-            return json.toString();
-
+            json = new JSONObject(bufferedReader.readLine());
+            return json;
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -65,17 +59,17 @@ public class GetJson extends AsyncTask<String, String, String> {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(JSONObject result) {
         super.onPostExecute(result);
         if (asyncResponse != null){
-            asyncResponse.processFinish(result);
+            try {
+                asyncResponse.processFinish(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-
     }
-
-
 }
 
