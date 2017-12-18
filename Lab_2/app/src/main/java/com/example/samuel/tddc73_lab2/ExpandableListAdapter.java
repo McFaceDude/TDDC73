@@ -1,25 +1,15 @@
 package com.example.samuel.tddc73_lab2;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import android.graphics.Color;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.SearchView;
-import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
-import java.lang.reflect.Type;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by samuel on 11/26/17.
@@ -29,7 +19,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
     private final ArrayList<Pair<String, ArrayList<String>>> parentList;
     private final ArrayList<Pair<String, ArrayList<String>>> originalParentList;
-    private SearchView search;
 
     public ExpandableListAdapter(Context context, ArrayList<Pair<String, ArrayList<String>>> parentList) {
         this.context = context;
@@ -42,48 +31,40 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        //Log.d("", "getGroupCount: return " + parentList.size());
         return parentList.size();
     }
 
     @Override
     public int getChildrenCount(int parentPosition) {
-        //Log.d("", "getChildrenCount:" + parentPosition);
         return parentList.get(parentPosition).second.size();
     }
 
     @Override
     public String getGroup(int parentPosition) {
-        //Log.d("", "getGroup:" + parentPosition);
         return parentList.get(parentPosition).first;
     }
 
     @Override
     public String getChild(int parentPosition, int childPosition) {
-        //Log.d("", "getChild:" + parentPosition + childPosition);
         return parentList.get(parentPosition).second.get(childPosition);
     }
     @Override
     public long getGroupId(int parentPosition) {
-        //Log.d("", "getGroupId:" + parentPosition);
         return parentPosition;
     }
 
     @Override
     public long getChildId(int parentPosition , int childPosition) {
-        Log.d("", "getChildId:" + parentPosition);
         return childPosition;
     }
 
     @Override
     public boolean hasStableIds() {
-        //Log.d("", "hasStableIds: ");
         return false;
     }
 
     @Override
     public View getGroupView(int parentPosition, boolean isLastChild, View view, ViewGroup parent) {
-        //Log.d("", "getGroupView: " + parentPosition);
 
         if( view == null){
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -92,12 +73,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView heading = (TextView) view;
         heading.setText(parentList.get(parentPosition).first);
+        view.setTag(parentList.get(parentPosition).first);
         return view;
     }
 
     @Override
     public View getChildView(int parentPosition, int childPosition, boolean isLastChild, View view, ViewGroup parent) {
-        //Log.d("", "getChildView, parentPos:" + parentPosition + " childPos: "+ childPosition);
         String child = getChild(parentPosition, childPosition);
 
         if(view == null){
@@ -106,13 +87,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         TextView heading = (TextView) view;
         heading.setText(child);
+        view.setBackgroundColor(Color.WHITE);
+        //Set unique tag for every childView
+        Integer childString = childPosition;
+        Integer parentString = parentPosition;
+        view.setTag(parentString.toString() + childString.toString());
 
         return view;
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        //Log.d("", "isChildSelectable: ");
         return true;
     }
 }

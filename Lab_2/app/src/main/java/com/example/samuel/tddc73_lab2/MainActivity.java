@@ -8,13 +8,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
-
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,55 +32,33 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
         listView = findViewById(R.id.ListView);
         listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View view, int i, long l) {
-                for(int pIndex=0; pIndex < parentList.size(); pIndex++){
-                    if(pIndex == i){
-
-                        if (listView.isGroupExpanded(i)) {
-                            listView.collapseGroup(i);
-                            parentExpanded = false;
-                            searchField.setText("/");
-                        }
-                        else{
-                            parentExpanded = true;
-                            //resetBackgroundColors(i, parent, view);
-                            listView.expandGroup(i);
-
-                            searchField.setText("/" + parentList.get(i));
-                            searchField.setSelection(parentList.get(i).length() + 1);
-                        }
-                    }
-                    else{
-                        collapseAllExcept(i);
-
-                    }
+            public boolean onGroupClick(ExpandableListView parent, View view, int parentId, long l) {
+                if (listView.isGroupExpanded(parentId)){
+                    listView.collapseGroup(parentId);
+                }
+                else{
+                    parentExpanded = true;
+                    listView.expandGroup(parentId);
+                    searchField.setText("/" + parentList.get(parentId));
+                    searchField.setSelection(parentList.get(parentId).length() + 1);
+                    collapseAllExcept(parentId);
                 }
                 return true;
             }
         });
+
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int parentId, int childId, long l) {
 
-                int childCount = expandableListAdapter.getChildrenCount(parentId);
-                for(int i = 0; i <childCount; i++){
-                    if(i == childId){
-                        System.out.println("clicked child id: " + i);
-                        View clickedChild = expandableListAdapter.getChildView(parentId, i, false, view, parent);
-                        clickedChild.setBackgroundColor(Color.LTGRAY);
-                    }
-                    else{
-                        System.out.println("not clicked child id: " + i);
-                        View notClickedChild = expandableListAdapter.getChildView(parentId, i, false, view, parent);
-                        notClickedChild.setBackgroundColor(Color.RED);
-                    }
-                }
+                resetBackgroundColors(parentId);
+                int index = parent.getFlatListPosition(parent.getPackedPositionForChild(parentId, childId));
+                parent.getChildAt(index).setBackgroundColor(Color.LTGRAY);
 
                 String text = "/" + parentList.get(parentId) +"/" +  data.get(parentId).second.get(childId);
                 searchField.setText(text);
                 searchField.setSelection(text.length());
                 return true;
-
             }
         });
         searchField =  findViewById(R.id.search);
@@ -118,25 +91,13 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
         displayList();
     }
 
-    public void resetBackgroundColors(int parentId, ExpandableListView parent, View view, Integer childId){
-        System.out.println("resetB" + (int) expandableListAdapter.getChildId(parentId,childId+1));
-        View child1 = expandableListAdapter.getChildView(childId, parentId,false, view, parent);
-        child1.setBackgroundColor(Color.RED);
-
+    public void resetBackgroundColors(Integer parentId){
         int childCount = expandableListAdapter.getChildrenCount(parentId);
-        for(int i = 0; i <childCount; i++){
-            View child = expandableListAdapter.getChildView(parentId, (int) expandableListAdapter.getChildId(parentId,i), false, view,parent);
-            System.out.println("Hej");
-            if(child != null){
-
-                System.out.println("wat");
-                child.setBackgroundColor(Color.BLUE);
-
-            }
-            expandableListAdapter.getChildView(parentId, i,false, view, parent).setBackgroundColor(Color.WHITE);
+        for(Integer i = 0; i <childCount; i++){
+            listView.findViewWithTag(parentId.toString() + i.toString()).setBackgroundColor(Color.WHITE);
         }
-
     }
+
     public void collapseAllExcept(int exceptionIndex){
         for(int i = 0; i < parentList.size(); i++){
             if(listView.isGroupExpanded(i) && i != exceptionIndex){
@@ -146,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
     }
     @Override
     public boolean onChildClick(ExpandableListView parent, View view, int i, int i1, long l) {
-        Log.d("", "onChildClick: SECOND ON CHILD CLICK");
         return true;
     }
 
@@ -161,42 +121,42 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
             //Parent match
             if (parentMatchIndex != null){
                 if(!listView.isGroupExpanded(parentMatchIndex)){
+
                     listView.expandGroup(parentMatchIndex);
                     collapseAllExcept(parentMatchIndex);
                 }
                 //Child searched for
                 if (splitedString.size() > 2){
                     ArrayList<String> potentialChildren = potentialMatches(data.get(parentMatchIndex).second, splitedString.get(2).toString());
+
                     //Potential children found
                     if(potentialChildren.size() > 0) {
                         Integer childMatchIndex = match(data.get(parentMatchIndex).second, splitedString.get(2).toString());
 
                         //Child match
                         if (potentialChildren.size() > 0 && childMatchIndex != null) {
-                            System.out.println("found the child!, parentIndex: " + parentMatchIndex + " childindex: " + childMatchIndex);
-                            //int index = listView.getFlatListPosition(ExpandableListView.getPackedPositionForChild(parentMatchIndex, childMatchIndex));
-                            //System.out.println("index: " + index);
-                            //listView.setItemChecked(0, true);
-
-                            //listView.getChildAt(1).setBackgroundColor(Color.BLUE);
+                            resetBackgroundColors(parentMatchIndex);
+                            listView.findViewWithTag(parentMatchIndex.toString() + childMatchIndex.toString()).setBackgroundColor(Color.LTGRAY);
                         }
                     }
                     //No child match
                     else{
+                        resetBackgroundColors(parentMatchIndex);
                         searchField.setBackgroundColor(Color.RED);
                     }
                 }
             }
+            if (parentMatchIndex == null){
+                //Collapse all groups
+                collapseAllExcept(-1);
+            }
         }
         else{
             searchField.setBackgroundColor(Color.RED);
-            for(int i= 0; i<parentList.size(); i++){
-                listView.collapseGroup(i);
-            }
+            //Collapse all groups
+            collapseAllExcept(-1);
         }
     }
-
-
 
     public ArrayList<String> potentialMatches(ArrayList<String> pMatches, String query){
         ArrayList<String> potentialMatchesIndex = new ArrayList<>();
@@ -223,15 +183,17 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
         vehicles.add("Dragon");
         vehicles.add("Boat");
         vehicles.add("Balloon");
+        vehicles.add("Whale");
 
         ArrayList<String> life = new ArrayList<>();
         life.add("Falafel");
         life.add("Dragon");
         life.add("Dancing");
-        life.add("Disco");
+        life.add("Light");
 
         ArrayList<String> food = new ArrayList<>();
         food.add("Hummus");
+        food.add("Bread");
         food.add("Falafel");
         food.add("Falafel");
 

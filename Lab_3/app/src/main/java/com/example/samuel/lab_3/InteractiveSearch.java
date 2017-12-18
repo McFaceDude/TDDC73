@@ -24,7 +24,8 @@ import java.util.Arrays;
 public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResponse{
     Integer id = 0;
     ArrayList<String> textList = new ArrayList();
-
+    ListPopupWindow listPopupWindow;
+    CustomListAdapter customListAdapter;
 
     public InteractiveSearch(Context context) throws JSONException {
         super(context);
@@ -33,13 +34,17 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
         EditText searchField = new EditText(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         searchField.setLayoutParams(params);
+        System.out.println("contex: " + context.getClass().getName());
+        listPopupWindow = new ListPopupWindow(context);
 
-        ListPopupWindow listPopupWindow = new ListPopupWindow(context);
         listPopupWindow.setAnchorView(searchField);
-        listPopupWindow.setAdapter(new CustomListAdapter(textList, context));
-        listPopupWindow.show();
+        customListAdapter = new CustomListAdapter(textList, context);
+        listPopupWindow.setAdapter(customListAdapter);
+
         //Generates error!
         addView(searchField);
+
+
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -72,6 +77,13 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
         if(resId.equals((tempId).toString())){
            textList = resList;
         }
+        customListAdapter.clearItems();
+        for(String item: textList){
+            customListAdapter.addItem(item);
+        }
+
+        listPopupWindow.dismiss();
+        listPopupWindow.show();
 
         System.out.println("resultArray: " + resList);
         System.out.println("resultId: " + resId + " OGid: " + id);

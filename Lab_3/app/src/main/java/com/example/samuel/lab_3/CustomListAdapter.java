@@ -23,6 +23,12 @@ public class CustomListAdapter extends BaseAdapter {
 
         this.array = array;
     }
+    public void addItem(String item){
+        array.add(item);
+    }
+    public void clearItems(){
+        array.clear();
+    }
 
     @Override
     public int getCount() {
@@ -46,11 +52,13 @@ public class CustomListAdapter extends BaseAdapter {
         if (view == null){
 
             customView = new CustomView(context, array.get(i));
-            System.out.println("get view: " + customView.getClass().getName());
+
         }
         else{
             System.out.println("get view, not null");
-            return view;
+            customView = (CustomView)view;
+            customView.setName(array.get(i));
+
         }
         return customView;
     }
