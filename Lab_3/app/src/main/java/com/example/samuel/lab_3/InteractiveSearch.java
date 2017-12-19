@@ -3,18 +3,17 @@ package com.example.samuel.lab_3;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by samuel on 12/16/17.
@@ -23,6 +22,7 @@ import java.util.Arrays;
 
 public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResponse{
     Integer id = 0;
+    Integer maxItems = 10;
     ArrayList<String> textList = new ArrayList();
     ListPopupWindow listPopupWindow;
     CustomListAdapter customListAdapter;
@@ -31,19 +31,24 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
         super(context);
         final InteractiveSearch interactiveSearch = this;
 
-        EditText searchField = new EditText(context);
+        final EditText searchField = new EditText(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         searchField.setLayoutParams(params);
-        System.out.println("contex: " + context.getClass().getName());
         listPopupWindow = new ListPopupWindow(context);
 
         listPopupWindow.setAnchorView(searchField);
         customListAdapter = new CustomListAdapter(textList, context);
         listPopupWindow.setAdapter(customListAdapter);
 
-        //Generates error!
-        addView(searchField);
+        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                searchField.setText(adapterView.getAdapter().getItem(i).toString());
+                searchField.setSelection(adapterView.getAdapter().getItem(i).toString().length());
+            }
+        });
 
+        addView(searchField);
 
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -54,10 +59,15 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
             }
             @Override
             public void afterTextChanged(Editable editable) {
-
-                GetJson getJson = new GetJson(interactiveSearch);
-                getJson.execute(editable.toString(), id.toString());
-                id += 1;
+                if (editable.length() > 0){
+                    GetJson getJson = new GetJson(interactiveSearch);
+                    getJson.execute(editable.toString(), id.toString());
+                    id += 1;
+                }
+                else{
+                    listPopupWindow.dismiss();
+                    id += 1;
+                }
             }
         });
 
@@ -66,33 +76,45 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
 
     @Override
     public void processFinish(JSONObject result) throws JSONException {
-        JSONArray jsonArray = result.getJSONArray("result");
+        JSONArray jsonArray = new JSONArray();
         ArrayList<String> resList = new ArrayList();
-        for(int i = 0; i <jsonArray.length(); i ++){
-            resList.add(jsonArray.get(i).toString());
+        Integer itemsToShow;
+        try {
+            jsonArray = result.getJSONArray("result");
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+
+        if(jsonArray.length() < maxItems){
+            itemsToShow = jsonArray.length();
+        }
+        else{
+            itemsToShow = maxItems;
+        }
+
+        if(jsonArray.length() > 0){
+            for(int i = 0; i <itemsToShow; i ++){
+                resList.add(jsonArray.get(i).toString());
+            }
         }
 
         String resId = result.get("id").toString();
-        Integer tempId = id -1;
+        Integer tempId = id - 1;
         if(resId.equals((tempId).toString())){
+            System.out.println("match!");
            textList = resList;
         }
         customListAdapter.clearItems();
         for(String item: textList){
+            System.out.println("add item: "+ item);
             customListAdapter.addItem(item);
         }
 
-        listPopupWindow.dismiss();
         listPopupWindow.show();
 
-        System.out.println("resultArray: " + resList);
-        System.out.println("resultId: " + resId + " OGid: " + id);
+        System.out.println("resultArray: " + textList);
+        System.out.println("resultId: " + resId + " OGid: " + tempId);
 
     }
-
-    //text paint new TextPaint
-    //set text size = 60
-    //array listadapter
-    //lägg till med add i adaptern
-    //ListPopupWindow listPopupWindow = new ListPopupWindow();
 }

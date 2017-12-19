@@ -34,6 +34,8 @@ public class GetJson extends AsyncTask<String, String, JSONObject> {
         String searchSeq = params[0];
         String id = params[1];
 
+
+
         HttpURLConnection connection = null;
         JSONObject json;
         BufferedReader bufferedReader = null;

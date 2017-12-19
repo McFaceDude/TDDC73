@@ -24,7 +24,8 @@ public class CustomListAdapter extends BaseAdapter {
         this.array = array;
     }
     public void addItem(String item){
-        array.add(item);
+        System.out.println("item added: " + item);
+        array.add(item.toLowerCase());
     }
     public void clearItems(){
         array.clear();
@@ -36,8 +37,8 @@ public class CustomListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
-        return null;
+    public String getItem(int i) {
+        return array.get(i);
     }
 
     @Override
@@ -51,15 +52,16 @@ public class CustomListAdapter extends BaseAdapter {
         CustomView customView;
         if (view == null){
 
-            customView = new CustomView(context, array.get(i));
-
+            customView = new CustomView(context);
         }
         else{
-            System.out.println("get view, not null");
+            //System.out.println("get view, not null");
             customView = (CustomView)view;
-            customView.setName(array.get(i));
-
         }
+
+        customView.setName(array.get(i));
+        //System.out.println("getView: " + customView.text);
+        System.out.println("getView, height: " + customView.getHeight() + "width" + customView.getWidth());
         return customView;
     }
 }

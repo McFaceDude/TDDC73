@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         InteractiveSearch searchField = null;
         try {
             searchField = new InteractiveSearch(this);
+            searchField.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         } catch (JSONException e) {
             e.printStackTrace();
         }
