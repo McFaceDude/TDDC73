@@ -26,25 +26,30 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
     ArrayList<String> textList = new ArrayList();
     ListPopupWindow listPopupWindow;
     CustomListAdapter customListAdapter;
+    Boolean itemClicked = false;
 
     public InteractiveSearch(Context context) throws JSONException {
         super(context);
         final InteractiveSearch interactiveSearch = this;
 
-        final EditText searchField = new EditText(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        searchField.setLayoutParams(params);
-        listPopupWindow = new ListPopupWindow(context);
 
+        final EditText searchField = new EditText(context);
+        searchField.setLayoutParams(params);
+
+        listPopupWindow = new ListPopupWindow(context);
         listPopupWindow.setAnchorView(searchField);
+
         customListAdapter = new CustomListAdapter(textList, context);
         listPopupWindow.setAdapter(customListAdapter);
 
         listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                itemClicked = true;
                 searchField.setText(adapterView.getAdapter().getItem(i).toString());
                 searchField.setSelection(adapterView.getAdapter().getItem(i).toString().length());
+                listPopupWindow.dismiss();
             }
         });
 
@@ -59,23 +64,23 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
             }
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.length() > 0){
+                if (editable.length() > 0 && !itemClicked && !editable.toString().contains(" ")){
                     GetJson getJson = new GetJson(interactiveSearch);
                     getJson.execute(editable.toString(), id.toString());
                     id += 1;
                 }
                 else{
+                    itemClicked = false;
                     listPopupWindow.dismiss();
                     id += 1;
                 }
             }
         });
-
-
     }
 
     @Override
     public void processFinish(JSONObject result) throws JSONException {
+        Boolean match = false;
         JSONArray jsonArray = new JSONArray();
         ArrayList<String> resList = new ArrayList();
         Integer itemsToShow;
@@ -86,35 +91,37 @@ public class InteractiveSearch extends LinearLayout implements GetJson.AsyncResp
 
         }
 
+        //If the amount of results is less than the maxItems, set amount of items to show to results
         if(jsonArray.length() < maxItems){
             itemsToShow = jsonArray.length();
         }
         else{
             itemsToShow = maxItems;
         }
-
+        //Check for match
         if(jsonArray.length() > 0){
+            match = true;
             for(int i = 0; i <itemsToShow; i ++){
                 resList.add(jsonArray.get(i).toString());
             }
         }
 
-        String resId = result.get("id").toString();
-        Integer tempId = id - 1;
-        if(resId.equals((tempId).toString())){
-            System.out.println("match!");
-           textList = resList;
-        }
+        textList = resList;
+
+        //Add matches items to the customListAdapter
         customListAdapter.clearItems();
         for(String item: textList){
-            System.out.println("add item: "+ item);
             customListAdapter.addItem(item);
         }
 
-        listPopupWindow.show();
-
-        System.out.println("resultArray: " + textList);
-        System.out.println("resultId: " + resId + " OGid: " + tempId);
-
+        //Check id match and if there where any matches
+        String resId = result.get("id").toString();
+        Integer tempId = id - 1;
+        if (match && resId.equals((tempId).toString())){
+            listPopupWindow.show();
+        }
+        else {
+            listPopupWindow.dismiss();
+        }
     }
 }

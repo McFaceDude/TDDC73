@@ -2,7 +2,6 @@ package com.example.samuel.lab_3;
 
 import android.os.AsyncTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 
 /**
@@ -25,7 +23,7 @@ public class GetJson extends AsyncTask<String, String, JSONObject> {
         void processFinish(JSONObject result) throws JSONException;
     }
     private AsyncResponse asyncResponse = null;
-    public GetJson(AsyncResponse asyncResponse){
+    GetJson(AsyncResponse asyncResponse){
         this.asyncResponse = asyncResponse;
     }
 

@@ -1,13 +1,9 @@
 package com.example.samuel.lab_3;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 
@@ -18,16 +14,15 @@ import java.util.ArrayList;
 public class CustomListAdapter extends BaseAdapter {
     private ArrayList<String> array;
     private Context context;
-    public CustomListAdapter(ArrayList<String> array, Context ct){
+    CustomListAdapter(ArrayList<String> array, Context ct){
         this.context = ct;
 
         this.array = array;
     }
-    public void addItem(String item){
-        System.out.println("item added: " + item);
+    void addItem(String item){
         array.add(item.toLowerCase());
     }
-    public void clearItems(){
+    void clearItems(){
         array.clear();
     }
 
@@ -51,17 +46,13 @@ public class CustomListAdapter extends BaseAdapter {
 
         CustomView customView;
         if (view == null){
-
             customView = new CustomView(context);
         }
         else{
-            //System.out.println("get view, not null");
             customView = (CustomView)view;
         }
 
         customView.setName(array.get(i));
-        //System.out.println("getView: " + customView.text);
-        System.out.println("getView, height: " + customView.getHeight() + "width" + customView.getWidth());
         return customView;
     }
 }
