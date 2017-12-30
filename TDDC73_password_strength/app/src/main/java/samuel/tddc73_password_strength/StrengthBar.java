@@ -14,6 +14,7 @@ import static android.content.Context.WINDOW_SERVICE;
  * Created by samuel on 12/29/17.
  */
 
+
 public class StrengthBar extends View {
 
     Paint backgroundPaint = new Paint();
@@ -34,6 +35,13 @@ public class StrengthBar extends View {
         barWidth = Math.round(displayMetrics.widthPixels);
     }
 
+    /**
+     * Sets all the values of the strength bar including color and text. Calls the draw method with
+     * invalidate.
+     * Is called from PasswordStrengthMeter.
+     * @param strength  Integer, it's the strength of the password which is calculated in
+     *                  PasswordStrengthMeter in the calculateStrength function.
+     */
     public void setValues(Integer strength){
         this.strengthLevel = strength;
         if(strengthLevel == 0){

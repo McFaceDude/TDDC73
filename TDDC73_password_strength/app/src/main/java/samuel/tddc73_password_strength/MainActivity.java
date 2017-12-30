@@ -22,6 +22,5 @@ public class MainActivity extends AppCompatActivity {
 
         linearLayoutMain.addView(passwordStrengthMeter);
         setContentView(linearLayoutMain);
-
     }
 }

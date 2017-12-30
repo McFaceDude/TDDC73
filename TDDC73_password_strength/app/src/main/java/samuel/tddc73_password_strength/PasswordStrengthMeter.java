@@ -9,7 +9,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * Created by samuel on 12/29/17.
+ * Contains four components.
+ * The passwordField where the password is entered.
+ * The standardText field which is the text that says "Password strength" and is always black.
+ * The strengthText field which says how strong the password is and has the same color as the bar.
+ * The strengthBar which fills up and changes color depending on the strength of the password. It
+ * has it's on java file and extends View.
+ *
+ * The class has 6 setters:
+ * SetMinimumLength, sets the minimum amount of characters the password must be.
+ * SetBarWidth, sets the width of the strengthBar.
+ * SetBarHeight, sets the height of the strengthBar.
+ *
+ * If any of these Setters are changed, then the numberOfReq variable in StrengthBar is changed
+ * to match the new number of requirements.
+ * SetReqUpperCase, sets if the password requires upper case characters.
+ * SetReqNumbers, sets if the password requires numbers.
+ * SetReqSpecialCase, sets if the password requires special characters.
  */
 
 
@@ -22,6 +38,7 @@ public class PasswordStrengthMeter extends LinearLayout {
     boolean reqUpperCase = true;
     boolean reqNumber = true;
     boolean reqSpecialCase = true;
+
 
     public PasswordStrengthMeter(final Context context) {
         super(context);
@@ -76,7 +93,17 @@ public class PasswordStrengthMeter extends LinearLayout {
         });
 
     }
+
+    /**
+     * Returns an Integer of maximum 4 and minimum 0. If some of the requirements have been set to
+     * false, the strength will be less and that requirement will not be checked.
+     * If you want to change the algorithm you can override this method and replace it with
+     * another method that returns a Integer from 0 to 4.
+     * @param   password    String
+     * @return  strength    Integer
+     */
     public Integer calculateStrength(String password){
+
         Integer strength = 0;
         if(password.length() > minimunLength){
             strength += 1;
