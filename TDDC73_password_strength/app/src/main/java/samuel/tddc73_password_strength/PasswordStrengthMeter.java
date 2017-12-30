@@ -53,7 +53,7 @@ public class PasswordStrengthMeter extends LinearLayout {
         standardText.setTextColor(Color.BLACK);
         standardText.setText("Password strength: ");
         strengthText = new TextView(context);
-        strengthText.setText("Enter a password");
+        strengthText.setText("Choose a password");
         strengthText.setTextColor(Color.BLACK);
 
         strengthText.setLayoutParams(params);
@@ -83,7 +83,7 @@ public class PasswordStrengthMeter extends LinearLayout {
             public void afterTextChanged(Editable editable) {
                 strengthBar.setValues(calculateStrength(editable.toString()));
                 if (editable.toString().equals("")){
-                    strengthText.setText("Enter a password");
+                    strengthText.setText("Choose a password");
                 }
                 else{
                     strengthText.setText(strengthBar.getStrengthText());
