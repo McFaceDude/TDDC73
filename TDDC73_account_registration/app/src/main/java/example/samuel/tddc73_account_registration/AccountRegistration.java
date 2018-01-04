@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -18,7 +19,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
- * Created by samuel on 1/2/18.
+ *
  */
 
 public class AccountRegistration extends LinearLayout {
@@ -68,6 +69,10 @@ public class AccountRegistration extends LinearLayout {
     boolean usernameEntered = false;
 
     boolean genderRequired;
+
+    LinearLayout linearLayoutTerms;
+    String termText;
+    CheckBox acceptTerms;
 
     public AccountRegistration(Context context) {
         super(context);
@@ -129,9 +134,23 @@ public class AccountRegistration extends LinearLayout {
                         textViewGender.setError(null);
                     }
                 }
+                if(!acceptTerms.isChecked()){
+                    acceptTerms.setError("Accept the terms");
+                }
+                if(acceptTerms.isChecked()){
+                    acceptTerms.setError(null);
+                }
             }
         });
-
+        linearLayoutTerms = new LinearLayout(context);
+        linearLayoutTerms.setOrientation(HORIZONTAL);
+        acceptTerms = new CheckBox(context);
+        termText = "I accept the terms of condition for this service";
+        TextView textViewTermText = new TextView(context);
+        textViewTermText.setText(termText);
+        textViewTermText.setTextSize(textSize);
+        linearLayoutTerms.addView(acceptTerms);
+        linearLayoutTerms.addView(textViewTermText);
 
         addName(context);
         setNameRequired(true);
@@ -146,11 +165,10 @@ public class AccountRegistration extends LinearLayout {
         addGender(context);
         setGenderRequired(true);
 
-
-
         columnContainer.addView(leftColumn);
         columnContainer.addView(rightColumn);
         this.addView(columnContainer);
+        this.addView(linearLayoutTerms);
         this.addView(registerButton);
     }
 
@@ -396,6 +414,9 @@ public class AccountRegistration extends LinearLayout {
         this.textSize = textSize;
     }
 
+    public void setTermText(String termText) {
+        this.termText = termText;
+    }
     public void removeName(){
         leftColumn.removeView(textViewName);
         rightColumn.removeView(editTextName);
@@ -419,6 +440,9 @@ public class AccountRegistration extends LinearLayout {
     public void removeGender(){
         leftColumn.removeView(textViewGender);
         rightColumn.removeView(genderDropdown);
+    }
+    public void removeTerms(){
+        this.removeView(linearLayoutTerms);
     }
 
 }

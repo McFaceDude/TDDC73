@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutMain.setOrientation(LinearLayout.VERTICAL);
 
         AccountRegistration accountRegistration = new AccountRegistration(this);
+
         linearLayoutMain.addView(accountRegistration);
         setContentView(linearLayoutMain);
     }
