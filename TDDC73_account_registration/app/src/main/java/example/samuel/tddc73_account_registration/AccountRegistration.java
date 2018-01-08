@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,8 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Observer;
 
 /**
  *The component is made up of 9 main parts.
@@ -33,7 +36,9 @@ import java.util.GregorianCalendar;
  * Birthdate, it has the function removeDateOfBirth.
  * Gender, it has the function removeGender.
  *
- * Terms of condition checkbox, it has the function removeTerms and setTermText.
+ * Additional fields can be added. They can be set to required or not.
+ *
+ * Terms of condition checkbox, it has the function removeTerms and setTermsText.
  * Register account button.
  *
  * There is a function setTextSize which sets the text size of all the field except the headline.
@@ -86,6 +91,11 @@ public class AccountRegistration extends LinearLayout {
     LinearLayout linearLayoutTerms;
     String termText;
     CheckBox acceptTerms;
+    //Extra field variables
+    ArrayList<Pair> extraRows = new ArrayList<>();
+    ArrayList<Pair<String, Object>> accountFields = new ArrayList<>();
+
+    CustomObservable customObservable;
 
     public AccountRegistration(Context context) {
         super(context);
@@ -99,7 +109,7 @@ public class AccountRegistration extends LinearLayout {
         //Left column
         leftColumn = new LinearLayout(context);
         leftColumn.setOrientation(LinearLayout.VERTICAL);
-        LayoutParams leftColumnParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 2);
+        final LayoutParams leftColumnParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 2);
         leftColumn.setLayoutParams(leftColumnParams);
         //Right column
         rightColumn = new LinearLayout(context);
@@ -121,24 +131,31 @@ public class AccountRegistration extends LinearLayout {
              * Checks if all the field that are required are set, if not field in, it displays error.
              * @param view
              */
+
             @Override
             public void onClick(View view) {
+                Boolean canSubmit = true;
                 if (nameRequired && !nameEntered){
                     editTextName.setError("Enter full name");
+                    canSubmit = false;
                 }
                 if (usernameRequired && !usernameEntered){
                     editTextUsername.setError("Enter username");
+                    canSubmit = false;
                 }
                 if (passwordRequired && !passwordEntered){
                     editTextPassword.setError("Enter Password");
+                    canSubmit = false;
                 }
                 if (emailRequired && !emailEntered){
                     editTextEmail.setError("Enter email");
+                    canSubmit = false;
                 }
                 if(dateOfBirthRequired){
                     if(year.getSelectedItemPosition() == 0 || month.getSelectedItemPosition() == 0
                             || day.getSelectedItemPosition() == 0){
                         textViewDateOfBirth.setError("Choose a birthdate");
+                        canSubmit = false;
                     }
                     else{
                         textViewDateOfBirth.setError(null);
@@ -147,6 +164,7 @@ public class AccountRegistration extends LinearLayout {
                 if(genderRequired){
                     if (genderDropdown.getSelectedItemPosition() == 0){
                         textViewGender.setError("Choose a gender");
+                        canSubmit = false;
                     }
                     else {
                         textViewGender.setError(null);
@@ -154,9 +172,46 @@ public class AccountRegistration extends LinearLayout {
                 }
                 if(!acceptTerms.isChecked()){
                     acceptTerms.setError("Accept the terms");
+                    canSubmit = false;
                 }
                 if(acceptTerms.isChecked()){
                     acceptTerms.setError(null);
+                }
+                for(Pair<EditText, Pair<Boolean, ArrayList<Boolean>>> rowPair: extraRows){
+                    if(rowPair.second.first && !rowPair.second.second.get(0)){
+                        rowPair.first.setError("Fill in the field");
+                        canSubmit = false;
+                    }
+                }
+                if (canSubmit){
+                    //Collect all the data from all the fields and call the observer with the data.
+                    ArrayList<Pair<String, String>> accountInfo = new ArrayList<>();
+                    for(Pair<String, Object> pair: accountFields){
+                        //Text fields
+                        if ( pair.second.getClass().getSimpleName().equals("EditText")){
+                            EditText editText = (EditText)pair.second;
+                            accountInfo.add(new Pair<String, String>(pair.first, editText.getText().toString()));
+
+                        }
+                        //Date of birth field
+                        else if(pair.second.getClass().getSimpleName().equals("LinearLayout")) {
+                            LinearLayout linearLayout = (LinearLayout) pair.second;
+                            Spinner spinner = (Spinner)linearLayout.getChildAt(0);
+                            String year = spinner.getSelectedItem().toString();
+                            Spinner spinner1 = (Spinner)linearLayout.getChildAt(1);
+                            String month = spinner1.getSelectedItem().toString();
+                            Spinner spinner2 = (Spinner)linearLayout.getChildAt(2);
+                            String day = spinner2.getSelectedItem().toString();
+
+                            accountInfo.add(new Pair<String, String>(pair.first, year+"-"+month+"-"+day));
+                        }
+                        //Gender field
+                        else if(pair.second.getClass().getSimpleName().equals("Spinner")) {
+                            Spinner spinner= (Spinner) pair.second;
+                            accountInfo.add(new Pair<String, String>(pair.first, spinner.getSelectedItem().toString()));
+                        }
+                    }
+                    customObservable.sendAccount(accountInfo);
                 }
             }
         });
@@ -201,6 +256,7 @@ public class AccountRegistration extends LinearLayout {
         leftColumn.addView(textViewName);
 
         editTextName = new EditText(context);
+        accountFields.add(new Pair<String, Object>("Name", editTextName));
         rightColumn.addView(editTextName);
     }
 
@@ -212,6 +268,7 @@ public class AccountRegistration extends LinearLayout {
         leftColumn.addView(textViewUsername);
 
         editTextUsername = new EditText(context);
+        accountFields.add(new Pair<String, Object>("Username", editTextUsername));
         rightColumn.addView(editTextUsername);
     }
 
@@ -224,6 +281,7 @@ public class AccountRegistration extends LinearLayout {
         leftColumn.addView(textViewPassword);
 
         editTextPassword = new EditText(context);
+        accountFields.add(new Pair<String, Object>("Password", editTextPassword));
         editTextPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
         rightColumn.addView(editTextPassword);
@@ -237,6 +295,7 @@ public class AccountRegistration extends LinearLayout {
         leftColumn.addView(textViewEmail);
 
         editTextEmail = new EditText(context);
+        accountFields.add(new Pair<String, Object>("Email", editTextEmail));
         rightColumn.addView(editTextEmail);
     }
     void addDateOfBirth(final Context context){
@@ -256,7 +315,7 @@ public class AccountRegistration extends LinearLayout {
         linearLayoutBirth.addView(year);
 
         month = new Spinner(context);
-        String[] months = new String[]{"Month", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] months = new String[]{"Month", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
         ArrayAdapter<String> monthAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, months);
         month.setAdapter(monthAdapter);
         linearLayoutBirth.addView(month);
@@ -283,6 +342,7 @@ public class AccountRegistration extends LinearLayout {
             }
         });
         linearLayoutBirth.addView(day);
+        accountFields.add(new Pair<String, Object>("DateOfBirth", linearLayoutBirth));
         rightColumn.addView(linearLayoutBirth);
     }
 
@@ -318,6 +378,7 @@ public class AccountRegistration extends LinearLayout {
         String[] items = new String[]{"Not chosen", "Male", "Female", "Other"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, items);
         genderDropdown.setAdapter(adapter);
+        accountFields.add(new Pair<String, Object>("Gender", genderDropdown));
         rightColumn.addView(genderDropdown);
     }
 
@@ -429,7 +490,6 @@ public class AccountRegistration extends LinearLayout {
                 @Override
                 public void afterTextChanged(Editable editable) {
                     passwordEntered = editable.toString().matches(".*[0-z].*");
-                    System.out.println("password entered: " + passwordEntered);
                 }
             });
         }
@@ -437,11 +497,62 @@ public class AccountRegistration extends LinearLayout {
             textViewPassword.setText("Password");
         }
     }
+
+
+    public void addRow(String rowName, boolean required, Context context){
+        try{
+            final ArrayList<Boolean> rowEntered = new ArrayList();
+            rowEntered.add(false);
+
+            final TextView row = new TextView(context);
+            row.setTextSize(textSize);
+            row.setText(rowName);
+            row.setLayoutParams(textParams);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            leftColumn.addView(row);
+
+            final EditText rowInput = new EditText(context);
+            if (required){
+                row.setText(rowName + "*");
+                rowInput.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                        if(editable.length() > 0 ){
+
+                            rowEntered.remove(0);
+                            rowEntered.add(true);
+                        }
+                        else{
+                            rowEntered.remove(0);
+                            rowEntered.add(false);
+                        }
+                    }
+                });
+            }
+
+            rightColumn.addView(rowInput);
+            Pair<View, Pair<Boolean, ArrayList<Boolean>>> pair = new Pair(rowInput, new Pair<>(required, rowEntered));
+            accountFields.add(new Pair<String, Object>(rowName, rowInput));
+            extraRows.add(pair);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Couldn't parse input, please try again");
+        }
+    }
+
     public void setTextSize(int textSize) {
         this.textSize = textSize;
     }
 
-    public void setTermText(String termText) {
+    public void setTermsText(String termText) {
         this.termText = termText;
     }
     public void removeName(){
@@ -468,10 +579,16 @@ public class AccountRegistration extends LinearLayout {
         leftColumn.removeView(textViewGender);
         rightColumn.removeView(genderDropdown);
     }
+
     public void removeTerms(){
         this.removeView(linearLayoutTerms);
     }
     public void setHeadlineText(String headlineText) {
         this.headlineText = headlineText;
+    }
+
+    public void addObserver(Observer observer){
+        customObservable = new CustomObservable();
+        customObservable.addObserver(observer);
     }
 }

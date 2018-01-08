@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutMain.setOrientation(LinearLayout.VERTICAL);
 
         PasswordStrengthMeter passwordStrengthMeter = new PasswordStrengthMeter(this);
-
         linearLayoutMain.addView(passwordStrengthMeter);
         setContentView(linearLayoutMain);
     }

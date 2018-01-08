@@ -8,6 +8,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.function.Function;
+
 /**
  * Contains four components.
  * The passwordField where the password is entered.
@@ -162,6 +164,9 @@ public class PasswordStrengthMeter extends LinearLayout {
             }
         }
         this.reqSpecialCase = reqSpecialCase;
+    }
+    public void setAlgorithm(Function customAlgorithm){
+
     }
 }
 
